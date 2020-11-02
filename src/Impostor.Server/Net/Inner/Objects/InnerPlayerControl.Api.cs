@@ -1,11 +1,16 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Impostor.Api.Innersloth.Customization;
 using Impostor.Api.Net.Inner.Objects;
+using Impostor.Api.Net.Inner.Objects.Components;
 
 namespace Impostor.Server.Net.Inner.Objects
 {
     internal partial class InnerPlayerControl : IInnerPlayerControl
     {
+        IInnerPlayerPhysics IInnerPlayerControl.Physics => Physics;
+
+        IInnerCustomNetworkTransform IInnerPlayerControl.NetworkTransform => NetworkTransform;
+
         IInnerPlayerInfo IInnerPlayerControl.PlayerInfo => PlayerInfo;
 
         public async ValueTask SetNameAsync(string name)
@@ -77,6 +82,32 @@ namespace Impostor.Server.Net.Inner.Objects
         {
             using var writer = _game.StartRpc(NetId, RpcCalls.SendChat);
             writer.Write(text);
+            await _game.FinishRpcAsync(writer);
+        }
+
+        public async ValueTask SendChatToPlayerAsync(string text, IInnerPlayerControl? player = null)
+        {
+            if (player == null)
+            {
+                player = this;
+            }
+
+            using var writer = _game.StartRpc(NetId, RpcCalls.SendChat);
+            writer.Write(text);
+            await _game.FinishRpcAsync(writer, player.OwnerId);
+        }
+
+        public async ValueTask SetMurderedAsync()
+        {
+            var writer = _game.StartRpc(NetId, RpcCalls.MurderPlayer);
+            writer.Write((byte)NetId);
+            await _game.FinishRpcAsync(writer);
+        }
+
+        public async ValueTask SetInfectedAsync()
+        {
+            var writer = _game.StartRpc(NetId, RpcCalls.SetInfected);
+            writer.Write((byte)NetId);
             await _game.FinishRpcAsync(writer);
         }
     }
