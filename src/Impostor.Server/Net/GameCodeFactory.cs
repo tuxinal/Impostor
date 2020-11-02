@@ -4,9 +4,9 @@ namespace Impostor.Server.Net
 {
     public class GameCodeFactory : IGameCodeFactory
     {
-        public GameCode Create()
+        public GameCode Create(int gameCount)
         {
-            return GameCode.Create();
+            return GameCode.Create(gameCount);
         }
     }
 }
