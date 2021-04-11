@@ -2,6 +2,6 @@
 {
     public interface IGameCodeFactory
     {
-        GameCode Create();
+        GameCode Create(int gameCount);
     }
 }

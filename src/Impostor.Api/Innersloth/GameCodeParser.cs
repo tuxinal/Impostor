@@ -54,26 +54,17 @@ namespace Impostor.Api.Innersloth
             return -1;
         }
 
-        public static int GenerateCode(int len)
+        public static int GenerateCode(int len, int modifier)
         {
             if (len != 4 && len != 6)
             {
                 throw new ArgumentException("should be 4 or 6", nameof(len));
             }
-
-            // Generate random bytes.
-#if NETSTANDARD2_0
-            var data = new byte[len];
-#else
-            Span<byte> data = stackalloc byte[len];
-#endif
-            Random.GetBytes(data);
-
             // Convert to their char representation.
             Span<char> dataChar = stackalloc char[len];
             for (var i = 0; i < len; i++)
             {
-                dataChar[i] = V2[V2Map[data[i] % 26]];
+                dataChar[i] = V2[V2Map[(modifier + i) % 26]];
             }
 
 #if NETSTANDARD2_0

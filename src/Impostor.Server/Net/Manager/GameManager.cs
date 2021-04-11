@@ -130,7 +130,21 @@ namespace Impostor.Server.Net.Manager
 
         private async ValueTask<(bool Success, Game? Game)> TryCreateAsync(GameOptionsData options)
         {
-            var gameCode = _gameCodeFactory.Create();
+            
+            var gameCode = new GameCode();
+            int modifier = 0;
+            while(true){
+                gameCode = _gameCodeFactory.Create(_games.Count + modifier);
+                if(_games.Count == 0){
+                    break;
+                }
+                if(!_games.ContainsKey(gameCode)){
+                    break;
+                } else {
+                    modifier++;
+                    continue;
+                }
+            }
             var gameCodeStr = gameCode.Code;
             var game = ActivatorUtilities.CreateInstance<Game>(_serviceProvider, _publicIp, gameCode, options);
 
