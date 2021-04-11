@@ -23,6 +23,6 @@ jobs:
           git remote add upstream https://github.com/impostor/Impostor.git
           git fetch upstream
 
-          git checkout airship
+          git checkout dev
           git merge --no-edit upstream/airship
           git push origin dev
